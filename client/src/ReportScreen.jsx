@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Alert, List } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -28,7 +29,7 @@ export default function ReportScreen() {
   if (error) {
     return (
       <div className="container">
-        <div className="msg error">{error}</div>
+        <Alert type="error" message={error} showIcon />
       </div>
     )
   }
@@ -40,13 +41,13 @@ export default function ReportScreen() {
   return (
     <div className="container">
       <h1>Reports</h1>
-      <ul className="list">
-        <li className="list-item">Students Attended: {stats.totalStudents}</li>
-        <li className="list-item">Guests Present: {stats.totalGuests}</li>
-        <li className="list-item">Total Present: {stats.totalTotal}</li>
-        <li className="list-item">Gowns Collected: {stats.gownsCollected}</li>
-        <li className="list-item">Gowns Returned: {stats.gownsReturned}</li>
-      </ul>
+      <List bordered className="list">
+        <List.Item>Students Attended: {stats.totalStudents}</List.Item>
+        <List.Item>Guests Present: {stats.totalGuests}</List.Item>
+        <List.Item>Total Present: {stats.totalTotal}</List.Item>
+        <List.Item>Gowns Collected: {stats.gownsCollected}</List.Item>
+        <List.Item>Gowns Returned: {stats.gownsReturned}</List.Item>
+      </List>
     </div>
   )
 }

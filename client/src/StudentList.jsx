@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { List } from 'antd'
 import './index.css'
 
 export default function StudentList() {
@@ -14,13 +15,15 @@ export default function StudentList() {
   return (
     <div className="container">
       <h1>Student List</h1>
-      <ul className="list">
-        {students.map(student => (
-          <li key={student.ID} className="list-item">
+      <List
+        bordered
+        dataSource={students}
+        renderItem={student => (
+          <List.Item key={student.ID} className="list-item">
             {student.Firstname} {student.Lastname} - {student.Course}
-          </li>
-        ))}
-      </ul>
+          </List.Item>
+        )}
+      />
     </div>
   )
 }

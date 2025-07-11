@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Table, Input } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -28,31 +29,30 @@ export default function AttendeeTable() {
     <div className="container">
       <h1>Attendees</h1>
       <div className="form-controls">
-        <input
-          type="text"
+        <Input
           placeholder="Search by ID or name"
           value={search}
           onChange={e => setSearch(e.target.value)}
+          style={{ width: 200 }}
         />
       </div>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Gown Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtered.map(s => (
-            <tr key={s.ID}>
-              <td>{s.ID}</td>
-              <td>{s.Firstname} {s.Lastname}</td>
-              <td>{s.GownStatus || 'Not Collected'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Table
+        dataSource={filtered}
+        rowKey="ID"
+        pagination={false}
+        className="table"
+        columns={[
+          { title: 'ID', dataIndex: 'ID' },
+          {
+            title: 'Name',
+            render: (_, s) => `${s.Firstname} ${s.Lastname}`
+          },
+          {
+            title: 'Gown Status',
+            render: (_, s) => s.GownStatus || 'Not Collected'
+          }
+        ]}
+      />
     </div>
   )
 }

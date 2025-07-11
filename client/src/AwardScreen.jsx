@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { Card, Button } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -39,15 +40,21 @@ export default function AwardScreen() {
       <h1>Award Collection</h1>
       <div className="grid">
         {students.map(s => (
-          <div key={s.ID} className="card">
-            {s.StudentPicture && (
-              <img src={s.StudentPicture} alt={s.Firstname} className="photo" />
-            )}
-            <h3>{s.Firstname} {s.Lastname}</h3>
-            <p>ID #{s.ID}</p>
+          <Card
+            key={s.ID}
+            className="card"
+            cover={
+              s.StudentPicture ? (
+                <img src={s.StudentPicture} alt={s.Firstname} className="photo" />
+              ) : null
+            }
+          >
+            <Card.Meta title={`${s.Firstname} ${s.Lastname}`} description={`ID #${s.ID}`} />
             <p>{s.Course}</p>
-            <button onClick={() => markCollected(s.ID)}>Mark Certificate Collected</button>
-          </div>
+            <Button onClick={() => markCollected(s.ID)} style={{ marginTop: 8 }}>
+              Mark Certificate Collected
+            </Button>
+          </Card>
         ))}
       </div>
     </div>

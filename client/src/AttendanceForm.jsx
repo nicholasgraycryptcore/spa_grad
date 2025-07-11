@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Input, InputNumber, Checkbox, Button, Alert } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -99,11 +100,11 @@ export default function AttendanceForm() {
   return (
     <div className="container">
       <div className="form-controls">
-        <input
-          type="text"
+        <Input
           placeholder="Search by ID or name"
           value={search}
           onChange={e => setSearch(e.target.value)}
+          style={{ width: 200 }}
         />
       </div>
       <ul className="search-results">
@@ -118,33 +119,37 @@ export default function AttendanceForm() {
         <form onSubmit={handleSubmit} className="form">
           <label>
             Guest Number
-            <input
-              type="number"
+            <InputNumber
+              min={0}
               value={guestNumber}
-              onChange={e => setGuestNumber(Number(e.target.value))}
+              onChange={value => setGuestNumber(value)}
+              style={{ width: '100%' }}
             />
           </label>
           <label className="checkbox">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={studentAttended}
               onChange={e => setStudentAttended(e.target.checked)}
-            />
-            Student Attended
+            >
+              Student Attended
+            </Checkbox>
           </label>
           {photo && <img src={photo} alt="preview" className="photo" />}
           <label>
             Upload Photo
             <input type="file" accept="image/*" onChange={handlePhotoChange} />
           </label>
-          <button type="submit">Save</button>
+          <Button type="primary" htmlType="submit">Save</Button>
         </form>
       )}
 
       {message && (
-        <div className={message.type === 'error' ? 'msg error' : 'msg'}>
-          {message.text}
-        </div>
+        <Alert
+          type={message.type === 'error' ? 'error' : 'success'}
+          message={message.text}
+          showIcon
+          style={{ marginTop: '1rem' }}
+        />
       )}
     </div>
   )
