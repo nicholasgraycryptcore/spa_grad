@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { Card } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -33,14 +34,18 @@ export default function AwardDisplay() {
       <h1>Award Display</h1>
       <div className="grid">
         {students.map(s => (
-          <div key={s.ID} className="card">
-            {s.StudentPicture && (
-              <img src={s.StudentPicture} alt={s.Firstname} className="photo" />
-            )}
-            <h3>{s.Firstname} {s.Lastname}</h3>
-            <p>ID #{s.ID}</p>
+          <Card
+            key={s.ID}
+            className="card"
+            cover={
+              s.StudentPicture ? (
+                <img src={s.StudentPicture} alt={s.Firstname} className="photo" />
+              ) : null
+            }
+          >
+            <Card.Meta title={`${s.Firstname} ${s.Lastname}`} description={`ID #${s.ID}`} />
             <p>{s.Course}</p>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
