@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Input, Select, Button, Alert } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -35,10 +36,9 @@ export default function GownManagement() {
       .catch(() => setMessage({ type: 'error', text: 'Failed to load student' }))
   }
 
-  const handleSelect = e => {
-    const id = e.target.value
-    setSelectedId(id)
-    if (id) loadStudent(id)
+  const handleSelect = value => {
+    setSelectedId(value)
+    if (value) loadStudent(value)
     else setStudent(null)
   }
 
@@ -64,20 +64,20 @@ export default function GownManagement() {
   return (
     <div className="container">
       <div className="form-controls">
-        <input
-          type="text"
+        <Input
           placeholder="Search by ID or name"
           value={search}
           onChange={e => setSearch(e.target.value)}
+          style={{ width: 200 }}
         />
-        <select value={selectedId} onChange={handleSelect}>
-          <option value="">Select a student</option>
-          {filtered.map(s => (
-            <option key={s.ID} value={s.ID}>
-              {s.ID} - {s.Firstname} {s.Lastname}
-            </option>
-          ))}
-        </select>
+        <Select
+          value={selectedId || undefined}
+          onChange={handleSelect}
+          placeholder="Select a student"
+          style={{ minWidth: 220 }}
+          allowClear
+          options={filtered.map(s => ({ value: s.ID, label: `${s.ID} - ${s.Firstname} ${s.Lastname}` }))}
+        />
       </div>
 
       {student && (
@@ -86,22 +86,25 @@ export default function GownManagement() {
           <p>Downpayment Type: {student.GownDownpaymentType || 'N/A'}</p>
           <label>
             Down-payment Type
-            <select value={downType} onChange={e => setDownType(e.target.value)}>
-              <option value="Money">Money</option>
-              <option value="ID">ID</option>
-            </select>
+            <Select value={downType} onChange={value => setDownType(value)} style={{ width: 120 }}>
+              <Select.Option value="Money">Money</Select.Option>
+              <Select.Option value="ID">ID</Select.Option>
+            </Select>
           </label>
           <div>
-            <button onClick={handleCollected}>Mark Collected</button>
-            <button onClick={handleReturned}>Mark Returned</button>
+            <Button type="primary" onClick={handleCollected}>Mark Collected</Button>
+            <Button onClick={handleReturned} style={{ marginLeft: 8 }}>Mark Returned</Button>
           </div>
         </div>
       )}
 
       {message && (
-        <div className={message.type === 'error' ? 'msg error' : 'msg'}>
-          {message.text}
-        </div>
+        <Alert
+          type={message.type === 'error' ? 'error' : 'success'}
+          message={message.text}
+          showIcon
+          style={{ marginTop: '1rem' }}
+        />
       )}
     </div>
   )
