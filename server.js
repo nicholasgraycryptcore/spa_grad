@@ -2,7 +2,7 @@ require('dotenv').config(); // Add this line at the very top
 
 const express = require('express');
 const path = require('path');
-const { getAllStudents } = require('./sheets');
+const { getAllStudents, getStudentById, updateStudentField } = require('./sheets');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,6 +16,39 @@ app.get('/api/students', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch students' });
+  }
+});
+
+app.get('/api/students/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const student = await getStudentById(id);
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+    res.json(student);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch student' });
+  }
+});
+
+app.put('/api/students/:id', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const updates = [];
+    if (req.body.GuestNumber !== undefined) {
+      updates.push(updateStudentField(id, 'GuestNumber', req.body.GuestNumber));
+    }
+    if (req.body.StudentAttended !== undefined) {
+      updates.push(updateStudentField(id, 'StudentAttended', req.body.StudentAttended));
+    }
+    await Promise.all(updates);
+    const student = await getStudentById(id);
+    res.json(student);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to update student' });
   }
 });
 
