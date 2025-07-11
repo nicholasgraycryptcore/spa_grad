@@ -1,3 +1,5 @@
+require('dotenv').config(); // Add this line at the very top
+
 const express = require('express');
 const path = require('path');
 const { getAllStudents } = require('./sheets');
