@@ -42,10 +42,12 @@ export default function AwardScreen() {
         {students.map(s => (
           <Card
             key={s.ID}
-            className="card"
+            className="display-card"
             cover={
               s.StudentPicture ? (
-                <img src={s.StudentPicture} alt={s.Firstname} className="photo" />
+                <img src={s.StudentPicture} alt={s.Firstname} className="photo" 
+                 style={{ margin: '0 auto' }}
+                />
               ) : null
             }
           >
