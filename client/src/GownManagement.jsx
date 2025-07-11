@@ -10,6 +10,7 @@ export default function GownManagement() {
   const [student, setStudent] = useState(null)
   const [downType, setDownType] = useState('Money')
   const [message, setMessage] = useState(null)
+  const [open, setOpen] = useState(false)
 
   const { getAllStudents, getStudentById, updateStudentField } = useSheets()
 
@@ -18,6 +19,11 @@ export default function GownManagement() {
       .then(setStudents)
       .catch(() => setMessage({ type: 'error', text: 'Failed to load students' }))
   }, [getAllStudents])
+
+  useEffect(() => {
+    if (search) setOpen(true)
+    else setOpen(false)
+  }, [search])
 
   const filtered = students.filter(s => {
     const term = search.toLowerCase()
@@ -40,6 +46,7 @@ export default function GownManagement() {
     setSelectedId(value)
     if (value) loadStudent(value)
     else setStudent(null)
+    setOpen(false)
   }
 
   const updateFields = updates => {
@@ -67,7 +74,10 @@ export default function GownManagement() {
         <Input
           placeholder="Search by ID or name"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={e => {
+            setSearch(e.target.value)
+            setOpen(true)
+          }}
           style={{ width: 200 }}
         />
         <Select
@@ -77,6 +87,8 @@ export default function GownManagement() {
           style={{ minWidth: 220 }}
           allowClear
           options={filtered.map(s => ({ value: s.ID, label: `${s.ID} - ${s.Firstname} ${s.Lastname}` }))}
+          open={open}
+          onDropdownVisibleChange={vis => setOpen(vis)}
         />
       </div>
 
