@@ -30,16 +30,16 @@ export default function AwardDisplay() {
   }, [loadStudents])
 
   return (
-    <div className="container">
+    <div className="display-container">
       <h1>Award Display</h1>
-      <div className="grid">
+      <div className="display-grid">
         {students.map(s => (
           <Card
             key={s.ID}
-            className="card"
+            className="display-card"
             cover={
               s.StudentPicture ? (
-                <img src={s.StudentPicture} alt={s.Firstname} className="photo" />
+                <img src={s.StudentPicture} alt={s.Firstname} className="display-photo" />
               ) : null
             }
           >
