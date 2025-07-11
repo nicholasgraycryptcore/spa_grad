@@ -7,7 +7,7 @@ export default function AttendanceForm() {
   const [search, setSearch] = useState('')
   const [selectedId, setSelectedId] = useState('')
   const [selectedStudent, setSelectedStudent] = useState(null)
-  const [guestNumber, setGuestNumber] = useState('')
+  const [guestNumber, setGuestNumber] = useState(0)
   const [studentAttended, setStudentAttended] = useState(false)
   const [message, setMessage] = useState(null)
 
@@ -48,7 +48,7 @@ export default function AttendanceForm() {
     e.preventDefault()
     if (!selectedId) return
     Promise.all([
-      updateStudentField(selectedId, 'GuestNumber', Number(guestNumber)),
+      updateStudentField(selectedId, 'GuestNumber', guestNumber),
       updateStudentField(
         selectedId,
         'StudentAttended',
@@ -86,7 +86,7 @@ export default function AttendanceForm() {
             <input
               type="number"
               value={guestNumber}
-              onChange={e => setGuestNumber(e.target.value)}
+              onChange={e => setGuestNumber(Number(e.target.value))}
             />
           </label>
           <label className="checkbox">
