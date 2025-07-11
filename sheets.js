@@ -21,7 +21,7 @@ const { google } = require('googleapis');
  */
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID || 'SPREADSHEET_ID';
+const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
 const SHEET_NAME = process.env.SHEET_NAME || 'Sheet1';
 
 function loadCredentials() {
