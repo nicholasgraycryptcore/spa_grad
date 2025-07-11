@@ -43,6 +43,12 @@ app.put('/api/students/:id', async (req, res) => {
     if (req.body.StudentAttended !== undefined) {
       updates.push(updateStudentField(id, 'StudentAttended', req.body.StudentAttended));
     }
+    if (req.body.GownStatus !== undefined) {
+      updates.push(updateStudentField(id, 'GownStatus', req.body.GownStatus));
+    }
+    if (req.body.GownDownpaymentType !== undefined) {
+      updates.push(updateStudentField(id, 'GownDownpaymentType', req.body.GownDownpaymentType));
+    }
     await Promise.all(updates);
     const student = await getStudentById(id);
     res.json(student);
