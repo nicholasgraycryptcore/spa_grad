@@ -21,14 +21,19 @@ const { google } = require('googleapis');
  */
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-const SPREADSHEET_ID = process.env.SPREADSHEET_ID;
+// Allow both SPREADSHEET_ID and REACT_APP_SPREADSHEET_ID for flexibility
+const SPREADSHEET_ID =
+  process.env.SPREADSHEET_ID || process.env.REACT_APP_SPREADSHEET_ID;
 const SHEET_NAME = process.env.SHEET_NAME || 'Sheet1';
 
 function loadCredentials() {
   if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
     return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
   }
-  const file = process.env.GOOGLE_SERVICE_ACCOUNT_FILE || path.join(__dirname, 'service-account.json');
+  const file =
+    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
+    process.env.GOOGLE_SERVICE_ACCOUNT_FILE ||
+    path.join(__dirname, 'service-account.json');
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 

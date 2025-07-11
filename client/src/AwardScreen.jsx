@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { useSheets } from './SheetsContext'
 import './index.css'
 
 export default function AwardScreen() {
   const [students, setStudents] = useState([])
+  const { getAllStudents, updateStudentField } = useSheets()
 
   const loadStudents = useCallback(() => {
-    fetch('/api/students')
-      .then(res => res.json())
+    getAllStudents()
       .then(data => {
         const filtered = data
           .filter(s => s.StudentAttended === 'Yes' && s.AwardStatus !== 'Collected')
@@ -15,7 +16,7 @@ export default function AwardScreen() {
         setStudents(filtered)
       })
       .catch(err => console.error(err))
-  }, [])
+  }, [getAllStudents])
 
   useEffect(() => {
     loadStudents()
@@ -28,11 +29,7 @@ export default function AwardScreen() {
   }, [loadStudents])
 
   const markCollected = id => {
-    fetch(`/api/students/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ AwardStatus: 'Collected' })
-    })
+    updateStudentField(id, 'AwardStatus', 'Collected')
       .then(() => loadStudents())
       .catch(err => console.error(err))
   }

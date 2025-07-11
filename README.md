@@ -4,24 +4,20 @@ This project provides a simple interface to view student information stored in a
 
 ## Setup
 
-1. Install dependencies (from the project root):
+1. Create a Google service account and give it **Editor** access to your sheet.
+   Download the JSON key and point `GOOGLE_APPLICATION_CREDENTIALS` to the file
+   in a `.env` file.  Also set `REACT_APP_SPREADSHEET_ID=<your-sheet-id>` and,
+   optionally, `SHEET_NAME` (defaults to `Sheet1`).
+
+2. Install dependencies and start the application:
    ```bash
    npm install
    npm --prefix client install
+   npm start
    ```
+   The Express API runs on port `3000` and the React application on port `5173`.
 
-2. Configure your Google service account credentials and spreadsheet ID via environment variables:
-   - `GOOGLE_SERVICE_ACCOUNT_JSON` or `GOOGLE_SERVICE_ACCOUNT_FILE`
-   - `SPREADSHEET_ID`
-   - `SHEET_NAME` (optional, defaults to `Sheet1`)
-
-3. Run the development servers:
-   ```bash
-   npm run dev
-   ```
-   The Express API runs on port `3000` and the React application on port `5173` with proxying to the API.
-
-4. Build the frontend for production:
+3. Build the frontend for production:
    ```bash
    npm --prefix client run build
    ```

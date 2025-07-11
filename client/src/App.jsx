@@ -1,21 +1,22 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Menu from './Menu'
-import StudentList from './StudentList'
 import AttendanceForm from './AttendanceForm'
 import GownManagement from './GownManagement'
 import AwardScreen from './AwardScreen'
+import { SheetsProvider } from './SheetsContext'
 
 export default function App() {
   return (
-    <Router>
-      <Menu />
-      <Routes>
-        <Route path="/" element={<StudentList />} />
-        <Route path="/attendance" element={<AttendanceForm />} />
-        <Route path="/gown" element={<GownManagement />} />
-        <Route path="/award" element={<AwardScreen />} />
-      </Routes>
-    </Router>
+    <SheetsProvider>
+      <Router>
+        <Menu />
+        <Routes>
+          <Route path="/" element={<AttendanceForm />} />
+          <Route path="/gown" element={<GownManagement />} />
+          <Route path="/award" element={<AwardScreen />} />
+        </Routes>
+      </Router>
+    </SheetsProvider>
   )
 }
