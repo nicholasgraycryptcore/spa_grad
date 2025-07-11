@@ -8,6 +8,7 @@ export default function Menu() {
       <Link to="/">Attendance</Link>
       <Link to="/gown">Gown Mgmt</Link>
       <Link to="/award">Awards</Link>
+      <Link to="/award-display">Award Display</Link>
     </nav>
   )
 }

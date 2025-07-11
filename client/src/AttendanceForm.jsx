@@ -9,6 +9,7 @@ export default function AttendanceForm() {
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [guestNumber, setGuestNumber] = useState(0)
   const [studentAttended, setStudentAttended] = useState(false)
+  const [photo, setPhoto] = useState('')
   const [message, setMessage] = useState(null)
 
   const { getAllStudents, getStudentById, updateStudentField } = useSheets()
@@ -33,6 +34,7 @@ export default function AttendanceForm() {
         setSelectedStudent(data)
         setGuestNumber(data.GuestNumber || 0)
         setStudentAttended(data.StudentAttended === 'Yes')
+        setPhoto(data.StudentPicture || '')
       })
       .catch(() => setMessage({ type: 'error', text: 'Failed to load student' }))
   }
@@ -41,7 +43,10 @@ export default function AttendanceForm() {
     const id = e.target.value
     setSelectedId(id)
     if (id) loadStudent(id)
-    else setSelectedStudent(null)
+    else {
+      setSelectedStudent(null)
+      setPhoto('')
+    }
   }
 
   const handleSubmit = e => {
@@ -55,10 +60,21 @@ export default function AttendanceForm() {
     const attendedVal = studentAttended ? 'Yes' : 'No'
     if (attendedVal !== selectedStudent.StudentAttended)
       updates.push(updateStudentField(selectedId, 'StudentAttended', attendedVal))
+    if (photo && photo !== selectedStudent.StudentPicture)
+      updates.push(updateStudentField(selectedId, 'StudentPicture', photo))
     Promise.all(updates)
       .then(() => loadStudent(selectedId))
       .then(() => setMessage({ type: 'success', text: 'Saved successfully' }))
       .catch(() => setMessage({ type: 'error', text: 'Failed to save changes' }))
+  }
+
+  const handlePhotoChange = e => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => setPhoto(reader.result)
+      reader.readAsDataURL(file)
+    }
   }
 
   return (
@@ -97,6 +113,11 @@ export default function AttendanceForm() {
               onChange={e => setStudentAttended(e.target.checked)}
             />
             Student Attended
+          </label>
+          {photo && <img src={photo} alt="preview" className="photo" />}
+          <label>
+            Upload Photo
+            <input type="file" accept="image/*" onChange={handlePhotoChange} />
           </label>
           <button type="submit">Save</button>
         </form>

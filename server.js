@@ -52,6 +52,9 @@ app.put('/api/students/:id', async (req, res) => {
     if (req.body.GownDownpaymentType !== undefined) {
       updates.push(updateStudentField(id, 'GownDownpaymentType', req.body.GownDownpaymentType));
     }
+    if (req.body.StudentPicture !== undefined) {
+      updates.push(updateStudentField(id, 'StudentPicture', req.body.StudentPicture));
+    }
     if (req.body.AwardStatus !== undefined) {
       updates.push(updateStudentField(id, 'AwardStatus', req.body.AwardStatus));
     }

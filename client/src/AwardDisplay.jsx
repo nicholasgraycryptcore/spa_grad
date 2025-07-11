@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
-export default function AwardScreen() {
+export default function AwardDisplay() {
   const [students, setStudents] = useState([])
-  const { getAllStudents, updateStudentField } = useSheets()
+  const { getAllStudents } = useSheets()
 
   const loadStudents = useCallback(() => {
     getAllStudents()
@@ -28,15 +28,9 @@ export default function AwardScreen() {
     }
   }, [loadStudents])
 
-  const markCollected = id => {
-    updateStudentField(id, 'AwardStatus', 'Collected')
-      .then(() => loadStudents())
-      .catch(err => console.error(err))
-  }
-
   return (
     <div className="container">
-      <h1>Award Collection</h1>
+      <h1>Award Display</h1>
       <div className="grid">
         {students.map(s => (
           <div key={s.ID} className="card">
@@ -46,7 +40,6 @@ export default function AwardScreen() {
             <h3>{s.Firstname} {s.Lastname}</h3>
             <p>ID #{s.ID}</p>
             <p>{s.Course}</p>
-            <button onClick={() => markCollected(s.ID)}>Mark Certificate Collected</button>
           </div>
         ))}
       </div>
