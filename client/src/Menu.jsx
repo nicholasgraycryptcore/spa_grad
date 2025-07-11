@@ -10,6 +10,7 @@ export default function Menu() {
       <Link to="/award">Awards</Link>
       <Link to="/award-display">Award Display</Link>
       <Link to="/reports">Reports</Link>
+      <Link to="/attendees">Attendees</Link>
     </nav>
   )
 }

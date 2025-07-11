@@ -82,3 +82,15 @@ body {
   border-radius: 4px;
   margin-bottom: 0.5rem;
 }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
