@@ -40,6 +40,9 @@ app.put('/api/students/:id', async (req, res) => {
     if (req.body.GuestNumber !== undefined) {
       updates.push(updateStudentField(id, 'GuestNumber', req.body.GuestNumber));
     }
+    if (req.body.GuestAttended !== undefined) {
+      updates.push(updateStudentField(id, 'GuestAttended', req.body.GuestAttended));
+    }
     if (req.body.StudentAttended !== undefined) {
       updates.push(updateStudentField(id, 'StudentAttended', req.body.StudentAttended));
     }

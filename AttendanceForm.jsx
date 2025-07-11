@@ -55,6 +55,10 @@ export default function AttendanceForm() {
     if (guestNumber !== selectedStudent.GuestNumber) {
       updates.push(updateStudentField(selectedStudent.ID, 'GuestNumber', guestNumber));
     }
+    // also update Guests Attended to match the number entered
+    if (guestNumber !== selectedStudent.GuestAttended) {
+      updates.push(updateStudentField(selectedStudent.ID, 'GuestAttended', guestNumber));
+    }
     const attendedValue = studentAttended ? 'Yes' : 'No';
     if (attendedValue !== selectedStudent.StudentAttended) {
       updates.push(updateStudentField(selectedStudent.ID, 'StudentAttended', attendedValue));

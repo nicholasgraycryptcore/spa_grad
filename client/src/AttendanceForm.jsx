@@ -47,14 +47,15 @@ export default function AttendanceForm() {
   const handleSubmit = e => {
     e.preventDefault()
     if (!selectedId) return
-    Promise.all([
-      updateStudentField(selectedId, 'GuestNumber', guestNumber),
-      updateStudentField(
-        selectedId,
-        'StudentAttended',
-        studentAttended ? 'Yes' : 'No'
-      )
-    ])
+    const updates = []
+    if (guestNumber !== selectedStudent.GuestNumber)
+      updates.push(updateStudentField(selectedId, 'GuestNumber', guestNumber))
+    if (guestNumber !== selectedStudent.GuestAttended)
+      updates.push(updateStudentField(selectedId, 'GuestAttended', guestNumber))
+    const attendedVal = studentAttended ? 'Yes' : 'No'
+    if (attendedVal !== selectedStudent.StudentAttended)
+      updates.push(updateStudentField(selectedId, 'StudentAttended', attendedVal))
+    Promise.all(updates)
       .then(() => loadStudent(selectedId))
       .then(() => setMessage({ type: 'success', text: 'Saved successfully' }))
       .catch(() => setMessage({ type: 'error', text: 'Failed to save changes' }))
