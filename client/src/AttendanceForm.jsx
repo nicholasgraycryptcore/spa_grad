@@ -39,15 +39,6 @@ export default function AttendanceForm() {
       .catch(() => setMessage({ type: 'error', text: 'Failed to load student' }))
   }
 
-  const handleSelect = e => {
-    const id = e.target.value
-    setSelectedId(id)
-    if (id) loadStudent(id)
-    else {
-      setSelectedStudent(null)
-      setPhoto('')
-    }
-  }
 
   const handleSubmit = e => {
     e.preventDefault()
@@ -100,6 +91,11 @@ export default function AttendanceForm() {
     }
   }
 
+  const handleSelectItem = id => {
+    setSelectedId(id)
+    loadStudent(id)
+  }
+
   return (
     <div className="container">
       <div className="form-controls">
@@ -109,15 +105,14 @@ export default function AttendanceForm() {
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <select value={selectedId} onChange={handleSelect}>
-          <option value="">Select a student</option>
-          {filtered.map(s => (
-            <option key={s.ID} value={s.ID}>
-              {s.ID} - {s.Firstname} {s.Lastname}
-            </option>
-          ))}
-        </select>
       </div>
+      <ul className="search-results">
+        {filtered.map(s => (
+          <li key={s.ID} onClick={() => handleSelectItem(s.ID)}>
+            {s.ID} - {s.Firstname} {s.Lastname}
+          </li>
+        ))}
+      </ul>
 
       {selectedStudent && (
         <form onSubmit={handleSubmit} className="form">
