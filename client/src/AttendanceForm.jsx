@@ -32,7 +32,7 @@ export default function AttendanceForm() {
     getStudentById(id)
       .then(data => {
         setSelectedStudent(data)
-        setGuestNumber(data.GuestNumber || 0)
+        setGuestNumber(data.GuestAttended || 0)
         setStudentAttended(data.StudentAttended === 'Yes')
         setPhoto(data.StudentPicture || '')
       })
@@ -53,8 +53,8 @@ export default function AttendanceForm() {
     e.preventDefault()
     if (!selectedId) return
     const updates = []
-    if (guestNumber !== selectedStudent.GuestNumber)
-      updates.push(updateStudentField(selectedId, 'GuestNumber', guestNumber))
+    // if (guestNumber !== selectedStudent.GuestNumber)
+    //   updates.push(updateStudentField(selectedId, 'GuestNumber', guestNumber))
     if (guestNumber !== selectedStudent.GuestAttended)
       updates.push(updateStudentField(selectedId, 'GuestAttended', guestNumber))
     const attendedVal = studentAttended ? 'Yes' : 'No'
