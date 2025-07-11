@@ -7,7 +7,8 @@ const { getAllStudents, getStudentById, updateStudentField } = require('./sheets
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+// Increase body limit to handle base64 encoded images
+app.use(express.json({ limit: '5mb' }));
 
 app.get('/api/students', async (req, res) => {
   try {

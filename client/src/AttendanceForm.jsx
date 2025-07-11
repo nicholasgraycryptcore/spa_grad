@@ -72,7 +72,30 @@ export default function AttendanceForm() {
     const file = e.target.files[0]
     if (file) {
       const reader = new FileReader()
-      reader.onloadend = () => setPhoto(reader.result)
+      reader.onload = () => {
+        const img = new Image()
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const maxSize = 400
+          let { width, height } = img
+          if (width > height) {
+            if (width > maxSize) {
+              height *= maxSize / width
+              width = maxSize
+            }
+          } else if (height > maxSize) {
+            width *= maxSize / height
+            height = maxSize
+          }
+          canvas.width = width
+          canvas.height = height
+          const ctx = canvas.getContext('2d')
+          ctx.drawImage(img, 0, 0, width, height)
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.7)
+          setPhoto(dataUrl)
+        }
+        img.src = reader.result
+      }
       reader.readAsDataURL(file)
     }
   }
