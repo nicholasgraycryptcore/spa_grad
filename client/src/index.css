@@ -61,3 +61,23 @@ body {
   font-family: Arial, sans-serif;
   padding: 20px;
 }
+
+.grid {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 4px;
+  width: 200px;
+}
+
+.photo {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}

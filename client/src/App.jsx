@@ -4,6 +4,7 @@ import Menu from './Menu'
 import StudentList from './StudentList'
 import AttendanceForm from './AttendanceForm'
 import GownManagement from './GownManagement'
+import AwardScreen from './AwardScreen'
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/" element={<StudentList />} />
         <Route path="/attendance" element={<AttendanceForm />} />
         <Route path="/gown" element={<GownManagement />} />
+        <Route path="/award" element={<AwardScreen />} />
       </Routes>
     </Router>
   )
