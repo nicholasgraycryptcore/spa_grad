@@ -1,27 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Menu from './Menu'
+import StudentList from './StudentList'
+import AttendanceForm from './AttendanceForm'
 
-function App() {
-  const [students, setStudents] = useState([])
-
-  useEffect(() => {
-    fetch('/api/students')
-      .then(res => res.json())
-      .then(setStudents)
-      .catch(err => console.error(err))
-  }, [])
-
+export default function App() {
   return (
-    <div>
-      <h1>Student List</h1>
-      <ul>
-        {students.map(student => (
-          <li key={student.ID}>
-            {student.Firstname} {student.Lastname} - {student.Course}
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Router>
+      <Menu />
+      <Routes>
+        <Route path="/" element={<StudentList />} />
+        <Route path="/attendance" element={<AttendanceForm />} />
+      </Routes>
+    </Router>
   )
 }
-
-export default App
