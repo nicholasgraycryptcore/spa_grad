@@ -24,7 +24,7 @@ const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
 // Allow both SPREADSHEET_ID and REACT_APP_SPREADSHEET_ID for flexibility
 const SPREADSHEET_ID =
   process.env.SPREADSHEET_ID || process.env.REACT_APP_SPREADSHEET_ID;
-const SHEET_NAME = process.env.SHEET_NAME || 'Sheet1';
+const SHEET_NAME = process.env.SHEET_NAME || 'Final';
 
 function loadCredentials() {
   if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
