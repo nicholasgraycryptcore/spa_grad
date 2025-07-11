@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useSheets } from './SheetsContext'
 import './index.css'
 
 export default function GownManagement() {
@@ -9,12 +10,13 @@ export default function GownManagement() {
   const [downType, setDownType] = useState('Money')
   const [message, setMessage] = useState(null)
 
+  const { getAllStudents, getStudentById, updateStudentField } = useSheets()
+
   useEffect(() => {
-    fetch('/api/students')
-      .then(res => res.json())
+    getAllStudents()
       .then(setStudents)
       .catch(() => setMessage({ type: 'error', text: 'Failed to load students' }))
-  }, [])
+  }, [getAllStudents])
 
   const filtered = students.filter(s => {
     const term = search.toLowerCase()
@@ -25,8 +27,7 @@ export default function GownManagement() {
   })
 
   const loadStudent = id => {
-    fetch(`/api/students/${id}`)
-      .then(res => res.json())
+    getStudentById(id)
       .then(data => {
         setStudent(data)
         setDownType(data.GownDownpaymentType || 'Money')
@@ -43,16 +44,12 @@ export default function GownManagement() {
 
   const updateFields = updates => {
     setMessage(null)
-    fetch(`/api/students/${selectedId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updates)
-    })
-      .then(res => res.json())
-      .then(data => {
-        setStudent(data)
-        setMessage({ type: 'success', text: 'Saved successfully' })
-      })
+    const promises = Object.entries(updates).map(([field, value]) =>
+      updateStudentField(selectedId, field, value)
+    )
+    Promise.all(promises)
+      .then(() => loadStudent(selectedId))
+      .then(() => setMessage({ type: 'success', text: 'Saved successfully' }))
       .catch(() => setMessage({ type: 'error', text: 'Failed to save changes' }))
   }
 

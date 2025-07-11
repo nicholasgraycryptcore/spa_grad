@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useSheets } from './SheetsContext'
 import './index.css'
 
 export default function AttendanceForm() {
@@ -10,12 +11,13 @@ export default function AttendanceForm() {
   const [studentAttended, setStudentAttended] = useState(false)
   const [message, setMessage] = useState(null)
 
+  const { getAllStudents, getStudentById, updateStudentField } = useSheets()
+
   useEffect(() => {
-    fetch('/api/students')
-      .then(res => res.json())
+    getAllStudents()
       .then(setStudents)
       .catch(() => setMessage({ type: 'error', text: 'Failed to load students' }))
-  }, [])
+  }, [getAllStudents])
 
   const filtered = students.filter(s => {
     const term = search.toLowerCase()
@@ -26,8 +28,7 @@ export default function AttendanceForm() {
   })
 
   const loadStudent = id => {
-    fetch(`/api/students/${id}`)
-      .then(res => res.json())
+    getStudentById(id)
       .then(data => {
         setSelectedStudent(data)
         setGuestNumber(data.GuestNumber || 0)
@@ -46,19 +47,16 @@ export default function AttendanceForm() {
   const handleSubmit = e => {
     e.preventDefault()
     if (!selectedId) return
-    fetch(`/api/students/${selectedId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        GuestNumber: Number(guestNumber),
-        StudentAttended: studentAttended ? 'Yes' : 'No'
-      })
-    })
-      .then(res => res.json())
-      .then(data => {
-        setSelectedStudent(data)
-        setMessage({ type: 'success', text: 'Saved successfully' })
-      })
+    Promise.all([
+      updateStudentField(selectedId, 'GuestNumber', Number(guestNumber)),
+      updateStudentField(
+        selectedId,
+        'StudentAttended',
+        studentAttended ? 'Yes' : 'No'
+      )
+    ])
+      .then(() => loadStudent(selectedId))
+      .then(() => setMessage({ type: 'success', text: 'Saved successfully' }))
       .catch(() => setMessage({ type: 'error', text: 'Failed to save changes' }))
   }
 
