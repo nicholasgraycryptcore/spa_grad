@@ -6,6 +6,7 @@ import GownManagement from './GownManagement'
 import AwardScreen from './AwardScreen'
 import AwardDisplay from './AwardDisplay'
 import ReportScreen from './ReportScreen'
+import AttendeeTable from './AttendeeTable'
 import { SheetsProvider } from './SheetsContext'
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/award" element={<AwardScreen />} />
           <Route path="/award-display" element={<AwardDisplay />} />
           <Route path="/reports" element={<ReportScreen />} />
+          <Route path="/attendees" element={<AttendeeTable />} />
         </Routes>
       </Router>
     </SheetsProvider>
