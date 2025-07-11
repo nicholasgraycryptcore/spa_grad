@@ -126,3 +126,41 @@ body {
   padding: 0.5rem;
   text-align: left;
 }
+
+/* Styles for AwardDisplay TV/Prompter view */
+.display-container {
+  width: 100%;
+  margin: 0;
+  padding: 1rem 2rem;
+}
+
+.display-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+}
+
+.display-card {
+  border: 1px solid #ddd;
+  padding: 1.5rem;
+  border-radius: 8px;
+  width: 300px;
+  font-size: 1.25rem;
+}
+
+.display-photo {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.display-card .ant-card-meta-title {
+  font-size: 1.5rem;
+}
+
+.display-card .ant-card-meta-description,
+.display-card p {
+  font-size: 1.25rem;
+}
