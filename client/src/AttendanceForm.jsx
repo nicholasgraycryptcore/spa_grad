@@ -107,14 +107,20 @@ export default function AttendanceForm() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       streamRef.current = stream
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
       setCameraActive(true)
     } catch (err) {
       setMessage({ type: 'error', text: 'Unable to access camera' })
     }
   }
+
+  useEffect(() => {
+    if (cameraActive && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current
+    }
+    if (!cameraActive && videoRef.current) {
+      videoRef.current.srcObject = null
+    }
+  }, [cameraActive])
 
   const closeCamera = () => {
     if (streamRef.current) {
