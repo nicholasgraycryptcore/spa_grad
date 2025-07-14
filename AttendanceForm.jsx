@@ -6,7 +6,7 @@ export default function AttendanceForm() {
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [guestNumber, setGuestNumber] = useState('');
+  const [guestNumber, setGuestNumber] = useState(0);
   const [studentAttended, setStudentAttended] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -34,7 +34,13 @@ export default function AttendanceForm() {
     try {
       const student = await getStudentById(id);
       setSelectedStudent(student);
-      setGuestNumber(student.GuestNumber || 0);
+      const guestVal =
+        student.GuestAttended !== undefined &&
+        student.GuestAttended !== null &&
+        student.GuestAttended !== ''
+          ? student.GuestAttended
+          : student.GuestNumber || 0;
+      setGuestNumber(guestVal);
       setStudentAttended(student.StudentAttended === 'Yes');
       setMessage(null);
     } catch (err) {
@@ -52,10 +58,7 @@ export default function AttendanceForm() {
   async function saveChanges() {
     setMessage(null);
     const updates = [];
-    if (guestNumber !== selectedStudent.GuestNumber) {
-      updates.push(updateStudentField(selectedStudent.ID, 'GuestNumber', guestNumber));
-    }
-    // also update Guests Attended to match the number entered
+    // only update GuestAttended; the allowed GuestNumber stays unchanged
     if (guestNumber !== selectedStudent.GuestAttended) {
       updates.push(updateStudentField(selectedStudent.ID, 'GuestAttended', guestNumber));
     }
@@ -71,7 +74,13 @@ export default function AttendanceForm() {
       await Promise.all(updates);
       const refreshed = await getStudentById(selectedStudent.ID);
       setSelectedStudent(refreshed);
-      setGuestNumber(refreshed.GuestNumber || 0);
+      const refreshedGuest =
+        refreshed.GuestAttended !== undefined &&
+        refreshed.GuestAttended !== null &&
+        refreshed.GuestAttended !== ''
+          ? refreshed.GuestAttended
+          : refreshed.GuestNumber || 0;
+      setGuestNumber(refreshedGuest);
       setStudentAttended(refreshed.StudentAttended === 'Yes');
       await fetchStudents();
       setMessage({ type: 'success', text: 'Saved successfully' });
