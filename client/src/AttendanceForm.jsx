@@ -13,8 +13,10 @@ export default function AttendanceForm() {
   const [photo, setPhoto] = useState('')
   const [message, setMessage] = useState(null)
   const [cameraActive, setCameraActive] = useState(false)
+  const [useFrontCamera, setUseFrontCamera] = useState(true)
   const videoRef = useRef(null)
   const streamRef = useRef(null)
+  const isMobile = /Mobi|Android/i.test(navigator.userAgent)
 
   const { getAllStudents, getStudentById, updateStudentField } = useSheets()
 
@@ -103,10 +105,18 @@ export default function AttendanceForm() {
     }
   }
 
-  const openCamera = async () => {
+  const openCamera = async (front = useFrontCamera) => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop())
+      }
+      const constraints = { video: { facingMode: front ? 'user' : 'environment' } }
+      const stream = await navigator.mediaDevices.getUserMedia(constraints)
       streamRef.current = stream
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+      }
+      setUseFrontCamera(front)
       setCameraActive(true)
     } catch (err) {
       setMessage({ type: 'error', text: 'Unable to access camera' })
@@ -128,6 +138,14 @@ export default function AttendanceForm() {
       streamRef.current = null
     }
     setCameraActive(false)
+  }
+
+  const switchCamera = () => {
+    const newFacing = !useFrontCamera
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop())
+    }
+    openCamera(newFacing)
   }
 
   const capturePhoto = () => {
@@ -213,6 +231,11 @@ export default function AttendanceForm() {
             <div className="camera">
               <video ref={videoRef} autoPlay playsInline />
               <div>
+                {isMobile && (
+                  <Button onClick={switchCamera} style={{ marginRight: 8 }}>
+                    Switch Camera
+                  </Button>
+                )}
                 <Button onClick={capturePhoto} style={{ marginRight: 8 }}>
                   Capture
                 </Button>
