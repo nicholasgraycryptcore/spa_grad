@@ -52,7 +52,7 @@ export default function AwardScreen() {
             }
           >
             <Card.Meta title={`${s.Firstname} ${s.Lastname}`} description={`ID #${s.ID}`} />
-            <p>{s.Course}</p>
+            <p>{s.Course.split(/[\/,]/)[0].trim()}</p>
             <Button onClick={() => markCollected(s.ID)} style={{ marginTop: 8 }}>
               Mark Certificate Collected
             </Button>

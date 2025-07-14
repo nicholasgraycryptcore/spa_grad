@@ -44,7 +44,7 @@ export default function AwardDisplay() {
             }
           >
             <Card.Meta title={`${s.Firstname} ${s.Lastname}`} description={`ID #${s.ID}`} />
-            <p>{s.Course}</p>
+            <p>{s.Course.split(/[\/,]/)[0].trim()}</p>
           </Card>
         ))}
       </div>
