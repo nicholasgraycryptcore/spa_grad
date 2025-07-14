@@ -6,7 +6,7 @@ export default function AttendanceForm() {
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
-  const [guestNumber, setGuestNumber] = useState('');
+  const [guestNumber, setGuestNumber] = useState(0);
   const [studentAttended, setStudentAttended] = useState(false);
   const [message, setMessage] = useState(null);
 
@@ -58,10 +58,7 @@ export default function AttendanceForm() {
   async function saveChanges() {
     setMessage(null);
     const updates = [];
-    if (guestNumber !== selectedStudent.GuestNumber) {
-      updates.push(updateStudentField(selectedStudent.ID, 'GuestNumber', guestNumber));
-    }
-    // also update Guests Attended to match the number entered
+    // only update GuestAttended; the allowed GuestNumber stays unchanged
     if (guestNumber !== selectedStudent.GuestAttended) {
       updates.push(updateStudentField(selectedStudent.ID, 'GuestAttended', guestNumber));
     }
