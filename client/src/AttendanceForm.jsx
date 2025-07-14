@@ -46,7 +46,13 @@ export default function AttendanceForm() {
     getStudentById(id)
       .then(data => {
         setSelectedStudent(data)
-        setGuestNumber(data.GuestAttended || 0)
+        const guestVal =
+          data.GuestAttended !== undefined &&
+          data.GuestAttended !== null &&
+          data.GuestAttended !== ''
+            ? data.GuestAttended
+            : data.GuestNumber || 0
+        setGuestNumber(guestVal)
         setStudentAttended(data.StudentAttended === 'Yes')
         setPhoto(data.StudentPicture || '')
       })
