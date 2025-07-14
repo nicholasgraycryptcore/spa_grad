@@ -59,6 +59,10 @@ a {
   background-color: #f0f0f0;
 }
 
+.search-results li.selected {
+  background-color: #bae7ff;
+}
+
 @media (max-width: 600px) {
   .form-controls {
     flex-direction: column;

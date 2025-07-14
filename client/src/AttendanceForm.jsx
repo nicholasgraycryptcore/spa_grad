@@ -109,7 +109,11 @@ export default function AttendanceForm() {
       </div>
       <ul className="search-results">
         {filtered.map(s => (
-          <li key={s.ID} onClick={() => handleSelectItem(s.ID)}>
+          <li
+            key={s.ID}
+            onClick={() => handleSelectItem(s.ID)}
+            className={s.ID === selectedId ? 'selected' : ''}
+          >
             {s.ID} - {s.Firstname} {s.Lastname}
           </li>
         ))}
