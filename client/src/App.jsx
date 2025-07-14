@@ -5,6 +5,7 @@ import AttendanceForm from './AttendanceForm'
 import GownManagement from './GownManagement'
 import AwardScreen from './AwardScreen'
 import AwardDisplay from './AwardDisplay'
+import AwardDisplaySingle from './AwardDisplaySingle'
 import ReportScreen from './ReportScreen'
 import AttendeeTable from './AttendeeTable'
 import { SheetsProvider } from './SheetsContext'
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/gown" element={<GownManagement />} />
           <Route path="/award" element={<AwardScreen />} />
           <Route path="/award-display" element={<AwardDisplay />} />
+          <Route path="/award-display-single" element={<AwardDisplaySingle />} />
           <Route path="/reports" element={<ReportScreen />} />
           <Route path="/attendees" element={<AttendeeTable />} />
         </Routes>

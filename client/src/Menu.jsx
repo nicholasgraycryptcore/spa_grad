@@ -10,6 +10,7 @@ export default function MenuComponent() {
     { label: <Link to="/gown">Gown Mgmt</Link>, key: '/gown' },
     { label: <Link to="/award">Awards</Link>, key: '/award' },
     { label: <Link to="/award-display">Award Display</Link>, key: '/award-display' },
+    { label: <Link to="/award-display-single">Award Display (Single)</Link>, key: '/award-display-single' },
     { label: <Link to="/reports">Reports</Link>, key: '/reports' },
     { label: <Link to="/attendees">Attendees</Link>, key: '/attendees' }
   ]

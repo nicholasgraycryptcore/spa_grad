@@ -19,6 +19,13 @@ This project provides a simple interface to view student information stored in a
 
 3. Build the frontend for production:
    ```bash
-   npm --prefix client run build
-   ```
-   Then start the server with `npm start` to serve the built files.
+  npm --prefix client run build
+  ```
+  Then start the server with `npm start` to serve the built files.
+
+## Pages
+
+The application includes several screens accessible via the menu. Alongside the
+existing Award Display that cycles through the next three awards, there is now a
+**Single Award Display** page available at `/award-display-single` which shows
+only the next student.
