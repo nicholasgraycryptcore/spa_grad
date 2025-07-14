@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Input, InputNumber, Checkbox, Button, Alert } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
@@ -12,6 +12,9 @@ export default function AttendanceForm() {
   const [studentAttended, setStudentAttended] = useState(false)
   const [photo, setPhoto] = useState('')
   const [message, setMessage] = useState(null)
+  const [cameraActive, setCameraActive] = useState(false)
+  const videoRef = useRef(null)
+  const streamRef = useRef(null)
 
   const { getAllStudents, getStudentById, updateStudentField } = useSheets()
 
@@ -20,6 +23,14 @@ export default function AttendanceForm() {
       .then(setStudents)
       .catch(() => setMessage({ type: 'error', text: 'Failed to load students' }))
   }, [getAllStudents])
+
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(t => t.stop())
+      }
+    }
+  }, [])
 
   const filtered = students.filter(s => {
     const term = search.toLowerCase()
@@ -92,6 +103,60 @@ export default function AttendanceForm() {
     }
   }
 
+  const openCamera = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true })
+      streamRef.current = stream
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream
+      }
+      setCameraActive(true)
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Unable to access camera' })
+    }
+  }
+
+  const closeCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop())
+      streamRef.current = null
+    }
+    setCameraActive(false)
+  }
+
+  const capturePhoto = () => {
+    if (!videoRef.current) return
+    const video = videoRef.current
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7)
+    closeCamera()
+    const img = new Image()
+    img.onload = () => {
+      const resizeCanvas = document.createElement('canvas')
+      const maxSize = 400
+      let { width, height } = img
+      if (width > height) {
+        if (width > maxSize) {
+          height *= maxSize / width
+          width = maxSize
+        }
+      } else if (height > maxSize) {
+        width *= maxSize / height
+        height = maxSize
+      }
+      resizeCanvas.width = width
+      resizeCanvas.height = height
+      const rctx = resizeCanvas.getContext('2d')
+      rctx.drawImage(img, 0, 0, width, height)
+      setPhoto(resizeCanvas.toDataURL('image/jpeg', 0.7))
+    }
+    img.src = dataUrl
+  }
+
   const handleSelectItem = id => {
     setSelectedId(id)
     loadStudent(id)
@@ -138,7 +203,21 @@ export default function AttendanceForm() {
               Student Attended
             </Checkbox>
           </label>
+          {cameraActive && (
+            <div className="camera">
+              <video ref={videoRef} autoPlay playsInline />
+              <div>
+                <Button onClick={capturePhoto} style={{ marginRight: 8 }}>
+                  Capture
+                </Button>
+                <Button onClick={closeCamera}>Cancel</Button>
+              </div>
+            </div>
+          )}
           {photo && <img src={photo} alt="preview" className="photo" />}
+          <div className="form-controls">
+            <Button onClick={openCamera}>Take Photo</Button>
+          </div>
           <label>
             Upload Photo
             <input type="file" accept="image/*" onChange={handlePhotoChange} />
