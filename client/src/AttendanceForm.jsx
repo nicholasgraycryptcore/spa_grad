@@ -42,22 +42,38 @@ export default function AttendanceForm() {
     )
   })
 
-  const loadStudent = id => {
-    getStudentById(id)
-      .then(data => {
-        setSelectedStudent(data)
-        const guestVal =
-          data.GuestAttended !== undefined &&
-          data.GuestAttended !== null &&
-          data.GuestAttended !== ''
-            ? data.GuestAttended
-            : data.GuestNumber || 0
-        setGuestNumber(guestVal)
-        setStudentAttended(data.StudentAttended === 'Yes')
-        setPhoto(data.StudentPicture || '')
+  const loadStudent = async id => {
+    try {
+      const data = await getStudentById(id)
+      setSelectedStudent(data)
+
+      // coerce to integer (empty or non‑numeric → NaN)
+      const attendedNum = Number.parseInt(data.GuestAttended, 10)
+      const invitedNum  = Number.parseInt(data.GuestNumber,  10)
+
+      // pick the first valid number you find, otherwise zero
+      const guestVal = !Number.isNaN(attendedNum)
+        ? attendedNum
+        : !Number.isNaN(invitedNum)
+          ? invitedNum
+          : 0
+      console.log({
+        rawAttended: data.GuestAttended,
+        rawInvited:  data.GuestNumber,
+        parsedAttended: attendedNum,
+        parsedInvited:  invitedNum,
+        guestVal
       })
-      .catch(() => setMessage({ type: 'error', text: 'Failed to load student' }))
+      setGuestNumber(guestVal)
+      setStudentAttended(data.StudentAttended === 'Yes')
+      setPhoto(data.StudentPicture || '')
+    }
+    catch {
+      setMessage({ type: 'error', text: 'Failed to load student' })
+    }
   }
+
+
 
 
   const handleSubmit = e => {
@@ -213,7 +229,7 @@ export default function AttendanceForm() {
           </li>
         ))}
       </ul>
-
+      
       {selectedStudent && (
         <form onSubmit={handleSubmit} className="form">
           <label>
