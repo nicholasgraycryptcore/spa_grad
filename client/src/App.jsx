@@ -14,6 +14,11 @@ export default function App() {
   return (
     <SheetsProvider>
       <Router>
+        <img
+          src="https://study.spa.edu.tt/images/spa-logo-rec.png"
+          alt="SPA Logo"
+          className="logo"
+        />
         <Menu />
         <Routes>
           <Route path="/" element={<AttendanceForm />} />
