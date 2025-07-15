@@ -27,7 +27,7 @@ export default function AttendeeTable() {
 
   return (
     <div className="container">
-      <h1>Attendees</h1>
+      {/* <h1>Attendees</h1> */}
       <div className="form-controls">
         <Input
           placeholder="Search by ID or name"
