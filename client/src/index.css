@@ -8,6 +8,20 @@ a {
   margin-bottom: 1.5rem;
 }
 
+.menu-wrapper {
+  text-align: center;
+}
+
+.menu-toggle {
+  margin-bottom: 0.5rem;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 1rem;
+  max-width: 200px;
+}
+
 .container {
   max-width: 800px;
   margin: 0 auto;

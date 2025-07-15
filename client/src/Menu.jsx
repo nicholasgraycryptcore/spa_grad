@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Menu } from 'antd'
+import { Menu, Button } from 'antd'
 import './index.css'
 
 export default function MenuComponent() {
   const location = useLocation()
+  const [open, setOpen] = useState(false)
   const items = [
     { label: <Link to="/">Attendance</Link>, key: '/' },
     { label: <Link to="/gown">Gown Mgmt</Link>, key: '/gown' },
@@ -16,11 +17,19 @@ export default function MenuComponent() {
   ]
 
   return (
-    <Menu
-      mode="horizontal"
-      selectedKeys={[location.pathname]}
-      items={items}
-      className="menu"
-    />
+    <div className="menu-wrapper">
+      <Button className="menu-toggle" onClick={() => setOpen(!open)}>
+        Menu
+      </Button>
+      {open && (
+        <Menu
+          mode="horizontal"
+          selectedKeys={[location.pathname]}
+          items={items}
+          onClick={() => setOpen(false)}
+          className="menu"
+        />
+      )}
+    </div>
   )
 }
