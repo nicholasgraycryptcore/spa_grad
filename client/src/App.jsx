@@ -9,6 +9,7 @@ import AwardDisplaySingle from './AwardDisplaySingle'
 import ReportScreen from './ReportScreen'
 import AttendeeTable from './AttendeeTable'
 import PhotoPackageForm from './PhotoPackageForm'
+import PhotoPackagesTable from './PhotoPackagesTable'
 import { SheetsProvider } from './SheetsContext'
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
           <Route path="/award-display" element={<AwardDisplay />} />
           <Route path="/award-display-single" element={<AwardDisplaySingle />} />
           <Route path="/photos" element={<PhotoPackageForm />} />
+          <Route path="/photo-packages" element={<PhotoPackagesTable />} />
           <Route path="/reports" element={<ReportScreen />} />
           <Route path="/attendees" element={<AttendeeTable />} />
         </Routes>
