@@ -9,12 +9,23 @@ export default function AttendeeTable() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    getAllStudents()
-      .then(data => {
-        const attended = data.filter(s => s.StudentAttended === 'Yes')
-        setStudents(attended)
-      })
-      .catch(err => console.error(err))
+    const fetchData = () => {
+      getAllStudents()
+        .then(data => {
+          const attended = data.filter(s => s.StudentAttended === 'Yes')
+          setStudents(attended)
+        })
+        .catch(err => console.error(err))
+    }
+
+    fetchData()
+
+    const source = new EventSource('/events')
+    source.onmessage = () => fetchData()
+
+    return () => {
+      source.close()
+    }
   }, [getAllStudents])
 
   const filtered = students.filter(s => {
