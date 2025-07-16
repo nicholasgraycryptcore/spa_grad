@@ -5,26 +5,44 @@ import './index.css'
 
 const PACKAGES = [
   {
-    name: 'Package 1',
+    name: 'Package 1 - 2-4x6 Stage Photos (Medal & Trophy)',
     description: '2-4x6 Stage Photos (Medal & Trophy)',
     prints: 40,
     digital: 20
   },
   {
-    name: 'Package 2',
-    description: '2-4x6 Stage photos (Medal & Trophy); 1 -8x10 Family/solo shot',
+    name: 'Package 2 - 2-4x6 Stage photos (Medal & Trophy)',
+    description: '2-4x6 Stage photos (Medal & Trophy)',
     prints: 80,
     digital: 40
   },
   {
-    name: 'Package 3',
+    name: 'Package 2 - 1 -8x10 Family/solo shot',
+    description: '1 -8x10 Family/solo shot',
+    prints: 80,
+    digital: 40
+  },
+  {
+    name: 'Package 3 - 2-8x10 Stage photos (Medal & Trophy)',
     description: '2-8x10 Stage photos (Medal & Trophy)',
     prints: 80,
     digital: 40
   },
   {
-    name: 'Package 4',
-    description: '2-4x6 Stage Photos (Medal & Trophy); 1 4x6 (Family/Solo shot); 1 8x10 (Family/Solo shot)',
+    name: 'Package 4 - 2-4x6 Stage Photos (Medal & Trophy)',
+    description: '2-4x6 Stage Photos (Medal & Trophy)',
+    prints: 100,
+    digital: 50
+  },
+  {
+    name: 'Package 4 - 1 4x6 (Family/Solo shot)',
+    description: '1 4x6 (Family/Solo shot)',
+    prints: 100,
+    digital: 50
+  },
+  {
+    name: 'Package 4 - 1 8x10 (Family/Solo shot)',
+    description: '1 8x10 (Family/Solo shot)',
     prints: 100,
     digital: 50
   }

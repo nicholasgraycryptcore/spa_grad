@@ -163,24 +163,27 @@ body {
   border: 1px solid #ddd;
   padding: 1.5rem;
   border-radius: 8px;
-  width: 300px;
+  width: 500px;
   font-size: 1.25rem;
+  background: rgb(255 255 255 / 59%);
 }
 
 .display-photo {
   width: 100%;
   height: auto;
+  max-height: 300px;
   border-radius: 8px;
   margin-bottom: 1rem;
 }
 
 .display-card .ant-card-meta-title {
-  font-size: 1.5rem;
+  font-size: 2.5rem;
+  text-transform: uppercase;
 }
 
 .display-card .ant-card-meta-description,
 .display-card p {
-  font-size: 1.25rem;
+  font-size: 2.25rem;
 }
 
 .camera {
@@ -198,4 +201,8 @@ body {
 
 .display-container h1 {
   display: none;
+}
+
+.mt-5{
+  margin-top: 40px;
 }
