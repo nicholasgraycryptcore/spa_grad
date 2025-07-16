@@ -16,6 +16,8 @@ This project provides a simple interface to view student information stored in a
    npm start
    ```
    The Express API runs on port `3000` and the React application on port `5173`.
+   The dev server proxies both `/api` and `/events` to the Express backend so
+   that server-sent events work during development.
 
 3. Build the frontend for production:
    ```bash
