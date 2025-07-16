@@ -29,6 +29,28 @@ export default function AwardDisplaySingle() {
     }
   }, [loadStudents])
 
+  //add scoped CSS class for display
+
+//add scoped CSS class for display, add an image to the body tag
+
+useEffect(() => {
+  document.body.classList.add('award-display-body');
+
+  // Add background image to body
+  document.body.style.backgroundImage = "url('https://study.spa.edu.tt/images/grad_back.jpg')";
+  document.body.style.backgroundSize = "cover";
+  document.body.style.backgroundPosition = "center";
+  document.body.style.backgroundRepeat = "no-repeat";
+
+  return () => {
+    document.body.classList.remove('award-display-body');
+    document.body.style.backgroundImage = '';
+    document.body.style.backgroundSize = '';
+    document.body.style.backgroundPosition = '';
+    document.body.style.backgroundRepeat = '';
+  };
+}, []);
+  
   return (
     <div className="display-container">
       <h1>Award Display (Single)</h1>

@@ -103,7 +103,7 @@ export default function GownManagement() {
               <Select.Option value="ID">ID</Select.Option>
             </Select>
           </label>
-          <div>
+          <div className='mt-5'>
             <Button type="primary" onClick={handleCollected}>Mark Collected</Button>
             <Button onClick={handleReturned} style={{ marginLeft: 8 }}>Mark Returned</Button>
           </div>
