@@ -18,6 +18,10 @@ const { google } = require('googleapis');
  * @property {string} [Email]
  * @property {string} [Phone]
  * @property {('Collected'|null)} [AwardStatus]
+ * @property {string} ["Photo Package"]
+ * @property {('Print'|'Digital')} ["Photo Package Type"]
+ * @property {('Paid'|'Not Paid')} ["Photo Payment Status"]
+ * @property {('Collected'|'Not Collected')} ["Photo Package Status"]
  */
 
 const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
@@ -61,7 +65,11 @@ const HEADERS = [
   'StudentPicture',
   'Email',
   'Phone',
-  'AwardStatus'
+  'AwardStatus',
+  'Photo Package',
+  'Photo Package Type',
+  'Photo Payment Status',
+  'Photo Package Status'
 ];
 
 const COLUMN_MAP = HEADERS.reduce((map, header, i) => {
