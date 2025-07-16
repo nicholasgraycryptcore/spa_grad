@@ -31,3 +31,6 @@ The application includes several screens accessible via the menu. Alongside the
 existing Award Display that cycles through the next three awards, there is now a
 **Single Award Display** page available at `/award-display-single` which shows
 only the next student.
+
+There is also a **Photo Packages** table available at `/photo-packages` that
+lists purchased packages with live updates.
