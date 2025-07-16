@@ -92,6 +92,18 @@ app.put('/api/students/:id', async (req, res) => {
     if (req.body.AwardStatus !== undefined) {
       updates.push(updateStudentField(id, 'AwardStatus', req.body.AwardStatus));
     }
+    if (req.body['Photo Package'] !== undefined) {
+      updates.push(updateStudentField(id, 'Photo Package', req.body['Photo Package']));
+    }
+    if (req.body['Photo Package Type'] !== undefined) {
+      updates.push(updateStudentField(id, 'Photo Package Type', req.body['Photo Package Type']));
+    }
+    if (req.body['Photo Payment Status'] !== undefined) {
+      updates.push(updateStudentField(id, 'Photo Payment Status', req.body['Photo Payment Status']));
+    }
+    if (req.body['Photo Package Status'] !== undefined) {
+      updates.push(updateStudentField(id, 'Photo Package Status', req.body['Photo Package Status']));
+    }
     await Promise.all(updates);
     const student = await getStudentById(id);
     res.json(student);
