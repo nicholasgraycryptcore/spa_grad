@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { google } = require('googleapis');
+const ExcelJS = require('exceljs');
 
 /**
  * @typedef {Object} Student
@@ -24,32 +24,9 @@ const { google } = require('googleapis');
  * @property {('Collected'|'Not Collected')} ["Photo Package Status"]
  */
 
-const SCOPES = ['https://www.googleapis.com/auth/spreadsheets'];
-// Allow both SPREADSHEET_ID and REACT_APP_SPREADSHEET_ID for flexibility
-const SPREADSHEET_ID =
-  process.env.SPREADSHEET_ID || process.env.REACT_APP_SPREADSHEET_ID;
 const SHEET_NAME = process.env.SHEET_NAME || 'Final';
-
-function loadCredentials() {
-  if (process.env.GOOGLE_SERVICE_ACCOUNT_JSON) {
-    return JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_JSON);
-  }
-  const file =
-    process.env.GOOGLE_APPLICATION_CREDENTIALS ||
-    process.env.GOOGLE_SERVICE_ACCOUNT_FILE ||
-    path.join(__dirname, 'service-account.json');
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
-}
-
-const credentials = loadCredentials();
-const auth = new google.auth.JWT(
-  credentials.client_email,
-  null,
-  credentials.private_key,
-  SCOPES
-);
-
-const sheets = google.sheets({ version: 'v4', auth });
+const DATA_DIR = path.join(__dirname, 'data');
+const FILE_PATH = path.join(DATA_DIR, 'gradevening.xlsx');
 
 const HEADERS = [
   'ID',
@@ -72,47 +49,49 @@ const HEADERS = [
   'Photo Package Status'
 ];
 
-const COLUMN_MAP = HEADERS.reduce((map, header, i) => {
-  map[header] = columnToLetter(i + 1);
-  return map;
-}, {});
+let writeQueue = Promise.resolve();
 
-function columnToLetter(col) {
-  let letter = '';
-  let temp;
-  while (col > 0) {
-    temp = (col - 1) % 26;
-    letter = String.fromCharCode(temp + 65) + letter;
-    col = (col - temp - 1) / 26;
+async function ensureWorkbook() {
+  if (!fs.existsSync(FILE_PATH)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet(SHEET_NAME);
+    ws.addRow(HEADERS);
+    await wb.xlsx.writeFile(FILE_PATH);
   }
-  return letter;
+}
+
+async function loadWorkbook() {
+  await ensureWorkbook();
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.readFile(FILE_PATH);
+  return wb;
 }
 
 function parseStudentRow(row) {
   const student = {};
   HEADERS.forEach((header, i) => {
-    let value = row[i];
-    if (value === undefined) return;
+    let value = row.getCell(i + 1).value;
+    if (value === undefined || value === null) return;
     if (['ID', 'GuestNumber', 'GuestAttended'].includes(header)) {
-      value = Number(value);
+      const num = Number(value);
+      value = Number.isNaN(num) ? undefined : num;
     }
     student[header] = value;
   });
   return student;
 }
 
-async function fetchAllRows() {
-  const columnEnd = COLUMN_MAP[HEADERS[HEADERS.length - 1]];
-  const { data } = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET_NAME}!A2:${columnEnd}`,
-  });
-  return data.values || [];
-}
-
 async function getAllStudents() {
-  const rows = await fetchAllRows();
-  return rows.map(parseStudentRow);
+  const wb = await loadWorkbook();
+  const ws = wb.getWorksheet(SHEET_NAME);
+  const students = [];
+  ws.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) return; // skip header
+    const student = parseStudentRow(row);
+    if (student.ID !== undefined) students.push(student);
+  });
+  return students;
 }
 
 async function getStudentById(id) {
@@ -121,21 +100,24 @@ async function getStudentById(id) {
 }
 
 async function updateStudentField(id, field, value) {
-  const rows = await fetchAllRows();
-  const index = rows.findIndex((r) => Number(r[0]) === id);
-  if (index === -1) {
-    throw new Error(`Student with ID ${id} not found`);
-  }
-  const rowNumber = index + 2; // account for header row
-  const column = COLUMN_MAP[field];
-  await sheets.spreadsheets.values.update({
-    spreadsheetId: SPREADSHEET_ID,
-    range: `${SHEET_NAME}!${column}${rowNumber}`,
-    valueInputOption: 'RAW',
-    requestBody: {
-      values: [[value]],
-    },
+  const column = HEADERS.indexOf(field) + 1;
+  if (column === 0) throw new Error(`Unknown field ${field}`);
+  writeQueue = writeQueue.then(async () => {
+    const wb = await loadWorkbook();
+    const ws = wb.getWorksheet(SHEET_NAME);
+    let targetRow;
+    ws.eachRow((row, rowNumber) => {
+      if (rowNumber === 1) return;
+      const cellVal = row.getCell(1).value;
+      if (Number(cellVal) === id) targetRow = row;
+    });
+    if (!targetRow) {
+      throw new Error(`Student with ID ${id} not found`);
+    }
+    targetRow.getCell(column).value = value;
+    await wb.xlsx.writeFile(FILE_PATH);
   });
+  return writeQueue;
 }
 
 module.exports = {
