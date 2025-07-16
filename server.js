@@ -7,8 +7,41 @@ const { getAllStudents, getStudentById, updateStudentField } = require('./sheets
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Store SSE connections
+const clients = [];
+
+function broadcastUpdate() {
+  clients.forEach((res) => {
+    try {
+      res.write('data: update\n\n');
+    } catch (err) {
+      // Connection might be closed
+    }
+  });
+}
+
 // Increase body limit to handle base64 encoded images
 app.use(express.json({ limit: '5mb' }));
+
+// SSE endpoint to notify clients of updates
+app.get('/events', (req, res) => {
+  res.set({
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive'
+  });
+  res.flushHeaders();
+
+  // Send a comment to keep connection alive
+  res.write(': connected\n\n');
+
+  clients.push(res);
+
+  req.on('close', () => {
+    const idx = clients.indexOf(res);
+    if (idx !== -1) clients.splice(idx, 1);
+  });
+});
 
 app.get('/api/students', async (req, res) => {
   try {
@@ -62,6 +95,7 @@ app.put('/api/students/:id', async (req, res) => {
     await Promise.all(updates);
     const student = await getStudentById(id);
     res.json(student);
+    broadcastUpdate();
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to update student' });

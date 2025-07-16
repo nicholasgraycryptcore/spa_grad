@@ -29,8 +29,6 @@ export default function AwardDisplaySingle() {
     }
   }, [loadStudents])
 
-  //add scoped CSS class for display
-
 //add scoped CSS class for display, add an image to the body tag
 
 useEffect(() => {
