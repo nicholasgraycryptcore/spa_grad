@@ -26,7 +26,7 @@ const ExcelJS = require('exceljs');
 
 const SHEET_NAME = process.env.SHEET_NAME || 'Final';
 const DATA_DIR = path.join(__dirname, 'data');
-const FILE_PATH = path.join(DATA_DIR, 'gradevening.xlsx');
+const FILE_PATH = path.join(DATA_DIR, 'gradtest.xlsx');
 
 const HEADERS = [
   'ID',
