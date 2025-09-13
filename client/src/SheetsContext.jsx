@@ -29,6 +29,19 @@ export function SheetsProvider({ children }) {
       if (!res.ok) throw new Error('Failed to update student')
       return res.json()
     }
+    ,
+    async createStudent(payload) {
+      const res = await fetch('/api/students', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      if (!res.ok) {
+        const msg = await res.text().catch(() => '')
+        throw new Error(msg || 'Failed to create student')
+      }
+      return res.json()
+    }
   }
 
   return (

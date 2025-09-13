@@ -3,7 +3,7 @@ require('dotenv').config(); // Add this line at the very top
 const express = require('express');
 const path = require('path');
 // Switch data backend from Excel to SQLite
-const { getAllStudents, getStudentById, updateStudentField, pingDb } = require('./db');
+const { getAllStudents, getStudentById, updateStudentField, pingDb, createStudent } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -65,6 +65,22 @@ app.get('/api/students/:id', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch student' });
+  }
+});
+
+app.post('/api/students', async (req, res) => {
+  try {
+    const body = req.body || {};
+    const created = await createStudent(body);
+    if (!created) return res.status(500).json({ error: 'Failed to create student' });
+    res.status(201).json(created);
+    broadcastUpdate();
+  } catch (err) {
+    if (err && err.code === 'ALREADY_EXISTS') {
+      return res.status(409).json({ error: err.message });
+    }
+    console.error(err);
+    res.status(500).json({ error: 'Failed to create student' });
   }
 });
 

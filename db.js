@@ -220,6 +220,57 @@ async function updateStudentField(id, field, value) {
   });
 }
 
+async function createStudent(data) {
+  const db = openDb();
+  await importFromExcelIfEmpty(db);
+  // Provide ID if missing: next integer ID
+  let id = data.ID;
+  if (id === undefined || id === null || id === '') {
+    id = await new Promise((resolve, reject) => {
+      db.get('SELECT COALESCE(MAX(ID),0)+1 AS nextId FROM students', (err, row) => {
+        if (err) return reject(err);
+        resolve(row?.nextId || 1);
+      });
+    });
+  }
+  id = Number(id);
+  if (!Number.isFinite(id)) {
+    db.close();
+    throw new Error('Invalid ID');
+  }
+  // Check if already exists
+  const exists = await new Promise((resolve, reject) => {
+    db.get('SELECT 1 FROM students WHERE ID = ?', [id], (err, row) => {
+      if (err) return reject(err);
+      resolve(!!row);
+    });
+  });
+  if (exists) {
+    db.close();
+    const e = new Error('Student with this ID already exists');
+    e.code = 'ALREADY_EXISTS';
+    throw e;
+  }
+  // Ensure any custom columns exist
+  const colsInPayload = Object.keys(data).filter(k => k !== 'ID');
+  if (colsInPayload.length) await addMissingColumns(db, colsInPayload);
+  // Build insert
+  const allCols = ['ID', ...colsInPayload];
+  const placeholders = allCols.map(() => '?').join(',');
+  const sql = `INSERT INTO students (${allCols.map(c => q(c)).join(',')}) VALUES (${placeholders})`;
+  const values = allCols.map(c => (c === 'ID' ? id : data[c]));
+  await new Promise((resolve, reject) => db.run(sql, values, (err) => (err ? reject(err) : resolve())));
+  // Return created row
+  const created = await new Promise((resolve, reject) => {
+    db.get('SELECT * FROM students WHERE ID = ?', [id], (err, row) => {
+      db.close();
+      if (err) return reject(err);
+      resolve(row ? normalizeRowObject(row) : null);
+    });
+  });
+  return created;
+}
+
 function normalizeRowObject(row) {
   // Copy original
   const out = { ...row };
@@ -272,4 +323,5 @@ module.exports = {
   getStudentById,
   updateStudentField,
   pingDb,
+  createStudent,
 };
