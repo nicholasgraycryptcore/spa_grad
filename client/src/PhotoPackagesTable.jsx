@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Table, Input } from 'antd'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Table, Input, Button } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -36,10 +36,46 @@ export default function PhotoPackagesTable() {
     )
   })
 
+  const csvRows = useMemo(() => {
+    const headers = ['Name', 'Email', 'Photo Package', 'Package Type', 'Payment Status', 'Photo Number']
+    const rows = filtered.map(s => [
+      `${s.Firstname} ${s.Lastname}`,
+      s.Email || '',
+      s['Photo Package'] || '',
+      s['Photo Package Type'] || '',
+      s['Photo Payment Status'] || '',
+      s['Photo Number'] || ''
+    ])
+    return [headers, ...rows]
+  }, [filtered])
+
+  const downloadCsv = () => {
+    const escape = (v) => {
+      const s = String(v ?? '')
+      if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"'
+      return s
+    }
+    const text = csvRows.map(r => r.map(escape).join(',')).join('\r\n') + '\r\n'
+    const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    const ts = new Date().toISOString().replace(/[:T]/g, '-').split('.')[0]
+    a.href = url
+    a.download = `photo-packages-${ts}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   const columns = [
     {
       title: 'Name',
       render: (_, s) => `${s.Firstname} ${s.Lastname}`
+    },
+    {
+      title: 'Email',
+      dataIndex: 'Email'
     },
     {
       title: 'Photo Package',
@@ -52,6 +88,10 @@ export default function PhotoPackagesTable() {
     {
       title: 'Payment Status',
       dataIndex: 'Photo Payment Status'
+    },
+    {
+      title: 'Photo Number',
+      dataIndex: 'Photo Number'
     }
   ]
 
@@ -64,6 +104,9 @@ export default function PhotoPackagesTable() {
           onChange={e => setSearch(e.target.value)}
           style={{ width: 200 }}
         />
+        <Button onClick={downloadCsv} style={{ marginLeft: 8 }}>
+          Export CSV
+        </Button>
       </div>
       <Table
         dataSource={filtered}

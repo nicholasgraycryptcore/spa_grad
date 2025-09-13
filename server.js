@@ -2,7 +2,8 @@ require('dotenv').config(); // Add this line at the very top
 
 const express = require('express');
 const path = require('path');
-const { getAllStudents, getStudentById, updateStudentField } = require('./sheets');
+// Switch data backend from Excel to SQLite
+const { getAllStudents, getStudentById, updateStudentField, pingDb } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -67,6 +68,30 @@ app.get('/api/students/:id', async (req, res) => {
   }
 });
 
+// Health check endpoint for DB connectivity and server liveness
+app.get('/health', async (req, res) => {
+  try {
+    const ok = await pingDb();
+    res.json({ status: 'ok', db: ok ? 'up' : 'down' });
+  } catch (err) {
+    res.status(500).json({ status: 'error', db: 'down' });
+  }
+});
+
+// Lightweight endpoint to return only the student's picture (if present)
+app.get('/api/students/:id/picture', async (req, res) => {
+  try {
+    const id = Number(req.params.id);
+    const student = await getStudentById(id);
+    if (!student) return res.status(404).json({ error: 'Student not found' });
+    const pic = student.StudentPicture || student['Student Picture'] || '';
+    res.json({ StudentPicture: pic });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch picture' });
+  }
+});
+
 app.put('/api/students/:id', async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -103,6 +128,9 @@ app.put('/api/students/:id', async (req, res) => {
     }
     if (req.body['Photo Package Status'] !== undefined) {
       updates.push(updateStudentField(id, 'Photo Package Status', req.body['Photo Package Status']));
+    }
+    if (req.body['Photo Number'] !== undefined) {
+      updates.push(updateStudentField(id, 'Photo Number', req.body['Photo Number']));
     }
     await Promise.all(updates);
     const student = await getStudentById(id);

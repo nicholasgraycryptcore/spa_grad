@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Table, Input } from 'antd'
+import React, { useEffect, useMemo, useState } from 'react'
+import { Table, Input, Button } from 'antd'
 import { useSheets } from './SheetsContext'
 import './index.css'
 
@@ -36,6 +36,36 @@ export default function AttendeeTable() {
     )
   })
 
+  const csvRows = useMemo(() => {
+    const headers = ['ID', 'Firstname', 'Lastname', 'Gown Status']
+    const rows = filtered.map(s => [
+      s.ID,
+      s.Firstname || '',
+      s.Lastname || '',
+      s.GownStatus || 'Not Collected'
+    ])
+    return [headers, ...rows]
+  }, [filtered])
+
+  const downloadCsv = () => {
+    const escape = (v) => {
+      const s = String(v ?? '')
+      if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"'
+      return s
+    }
+    const text = csvRows.map(r => r.map(escape).join(',')).join('\r\n') + '\r\n'
+    const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    const ts = new Date().toISOString().replace(/[:T]/g, '-').split('.')[0]
+    a.href = url
+    a.download = `attendees-${ts}.csv`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
+
   return (
     <div className="container">
       {/* <h1>Attendees</h1> */}
@@ -46,6 +76,9 @@ export default function AttendeeTable() {
           onChange={e => setSearch(e.target.value)}
           style={{ width: 200 }}
         />
+        <Button onClick={downloadCsv} style={{ marginLeft: 8 }}>
+          Export CSV
+        </Button>
       </div>
       <Table
         dataSource={filtered}

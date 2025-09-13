@@ -22,6 +22,7 @@ const ExcelJS = require('exceljs');
  * @property {('Print'|'Digital')} ["Photo Package Type"]
  * @property {('Paid'|'Not Paid')} ["Photo Payment Status"]
  * @property {('Collected'|'Not Collected')} ["Photo Package Status"]
+ * @property {string} ["Photo Number"]
  * @property {string|number} ["Table Number"]
  */
 
@@ -51,6 +52,7 @@ const HEADERS = [
   'Photo Package Type',
   'Photo Payment Status',
   'Photo Package Status',
+  'Photo Number',
   // New optional column. If the existing sheet already has it (with or without
   // trailing space), dynamic header detection below will pick it up.
   'Table Number'
@@ -155,7 +157,8 @@ async function updateStudentField(id, field, value) {
     StudentAttended: ['Student Attended', 'Student_Attended'],
     GuestNumber: ['Guest Number', 'Guest_Number'],
     'Table Number': ['Table Number ', 'TableNumber'],
-    StudentPicture: ['Student Picture', 'Student_Picture', 'Picture']
+    StudentPicture: ['Student Picture', 'Student_Picture', 'Picture'],
+    'Photo Number': ['PhotoNumber', 'Photo No', 'PhotoNo']
   };
 
   const want = String(field);

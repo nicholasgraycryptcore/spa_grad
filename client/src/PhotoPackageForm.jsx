@@ -59,6 +59,7 @@ export default function PhotoPackageForm() {
   const [pkgType, setPkgType] = useState('Print')
   const [paymentStatus, setPaymentStatus] = useState('Not Paid')
   const [pkgStatus, setPkgStatus] = useState('Not Collected')
+  const [photoNumber, setPhotoNumber] = useState('')
   const [message, setMessage] = useState(null)
 
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function PhotoPackageForm() {
         setPkgType(data['Photo Package Type'] || 'Print')
         setPaymentStatus(data['Photo Payment Status'] || 'Not Paid')
         setPkgStatus(data['Photo Package Status'] || 'Not Collected')
+        setPhotoNumber(data['Photo Number'] || '')
       })
       .catch(() => setMessage({ type: 'error', text: 'Failed to load student' }))
   }
@@ -119,7 +121,8 @@ export default function PhotoPackageForm() {
       'Photo Package': pkg,
       'Photo Package Type': pkgType,
       'Photo Payment Status': paymentStatus,
-      'Photo Package Status': pkgStatus
+      'Photo Package Status': pkgStatus,
+      'Photo Number': photoNumber
     })
   }
 
@@ -180,6 +183,15 @@ export default function PhotoPackageForm() {
               <Select.Option value="Not Collected">Not Collected</Select.Option>
               <Select.Option value="Collected">Collected</Select.Option>
             </Select>
+          </label>
+          <label>
+            Photo Number
+            <Input
+              placeholder="Enter photo number"
+              value={photoNumber}
+              onChange={e => setPhotoNumber(e.target.value)}
+              style={{ width: 200 }}
+            />
           </label>
           <Button type="primary" htmlType="submit">Save</Button>
         </form>
