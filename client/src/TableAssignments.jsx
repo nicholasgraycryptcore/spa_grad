@@ -47,7 +47,7 @@ export default function TableAssignments() {
       const list = byTable.get(tableKey)
       list.push(full)
       for (let i = 1; i <= guestCount; i++) {
-        list.push(`${full} - Guest ${i}`)
+        list.push(`${first} - Guest ${i}`)
       }
     })
 
