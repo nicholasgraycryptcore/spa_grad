@@ -15,7 +15,8 @@ export default function MenuComponent() {
     { label: <Link to="/photos">Photos</Link>, key: '/photos' },
     { label: <Link to="/photo-packages">Photo Packages</Link>, key: '/photo-packages' },
     { label: <Link to="/reports">Reports</Link>, key: '/reports' },
-    { label: <Link to="/attendees">Attendees</Link>, key: '/attendees' }
+    { label: <Link to="/attendees">Attendees</Link>, key: '/attendees' },
+    { label: <Link to="/tables">Tables</Link>, key: '/tables' }
   ]
 
   return (

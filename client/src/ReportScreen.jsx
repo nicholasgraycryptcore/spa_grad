@@ -12,7 +12,10 @@ export default function ReportScreen() {
     getAllStudents()
       .then(data => {
         const totalStudents = data.filter(s => s.StudentAttended === 'Yes').length
-        const totalGuests = data.reduce((sum, s) => sum + (s.GuestAttended || 0), 0)
+        const totalGuests = data.reduce((sum, s) => {
+          const n = Number(s.GuestAttended)
+          return sum + (Number.isNaN(n) ? 0 : n)
+        }, 0)
         const gownsCollected = data.filter(s => s.GownStatus === 'Collected').length
         const gownsReturned = data.filter(s => s.GownStatus === 'Returned').length
         setStats({

@@ -8,6 +8,7 @@ import AwardDisplay from './AwardDisplay'
 import AwardDisplaySingle from './AwardDisplaySingle'
 import ReportScreen from './ReportScreen'
 import AttendeeTable from './AttendeeTable'
+import TableAssignments from './TableAssignments'
 import PhotoPackageForm from './PhotoPackageForm'
 import PhotoPackagesTable from './PhotoPackagesTable'
 import { SheetsProvider } from './SheetsContext'
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/photo-packages" element={<PhotoPackagesTable />} />
           <Route path="/reports" element={<ReportScreen />} />
           <Route path="/attendees" element={<AttendeeTable />} />
+          <Route path="/tables" element={<TableAssignments />} />
         </Routes>
       </Router>
     </SheetsProvider>

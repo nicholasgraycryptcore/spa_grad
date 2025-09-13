@@ -22,12 +22,16 @@ const ExcelJS = require('exceljs');
  * @property {('Print'|'Digital')} ["Photo Package Type"]
  * @property {('Paid'|'Not Paid')} ["Photo Payment Status"]
  * @property {('Collected'|'Not Collected')} ["Photo Package Status"]
+ * @property {string|number} ["Table Number"]
  */
 
-const SHEET_NAME = process.env.SHEET_NAME || 'Final';
+const SHEET_NAME = process.env.SHEET_NAME || 'Sheet1';
 const DATA_DIR = path.join(__dirname, 'data');
-const FILE_PATH = path.join(DATA_DIR, 'gradtest.xlsx');
+const FILE_PATH = path.join(DATA_DIR, 'grad_sept.xlsx');
 
+// Default headers used only when creating a new workbook from scratch.
+// When reading or writing, we detect headers dynamically from the file
+// so additional columns (e.g. "Table Number") are supported transparently.
 const HEADERS = [
   'ID',
   'Firstname',
@@ -46,7 +50,10 @@ const HEADERS = [
   'Photo Package',
   'Photo Package Type',
   'Photo Payment Status',
-  'Photo Package Status'
+  'Photo Package Status',
+  // New optional column. If the existing sheet already has it (with or without
+  // trailing space), dynamic header detection below will pick it up.
+  'Table Number'
 ];
 
 let writeQueue = Promise.resolve();
@@ -68,16 +75,55 @@ async function loadWorkbook() {
   return wb;
 }
 
-function parseStudentRow(row) {
+function getHeadersFromWorksheet(ws) {
+  const headerRow = ws.getRow(1);
+  const headers = [];
+  for (let i = 1; i <= ws.columnCount; i++) {
+    const cellVal = headerRow.getCell(i).value;
+    if (cellVal === undefined || cellVal === null) continue;
+    headers.push(String(cellVal));
+  }
+  return headers.length ? headers : HEADERS;
+}
+
+function normalizeHeaderName(name) {
+  return String(name).replace(/\s+/g, '').toLowerCase();
+}
+
+function normalizeAttendedValue(value) {
+  if (value === undefined || value === null) return value;
+  if (typeof value === 'number') return value === 0 ? 'No' : 'Yes';
+  const s = String(value).trim().toLowerCase();
+  if (s === 'yes' || s === 'y' || s === 'true' || s === '1') return 'Yes';
+  if (s === 'no' || s === 'n' || s === 'false' || s === '0' || s === '') return 'No';
+  return value;
+}
+
+function parseStudentRow(row, headers) {
   const student = {};
-  HEADERS.forEach((header, i) => {
+  const CANONICAL = {
+    studentattended: 'StudentAttended',
+    guestattended: 'GuestAttended',
+    guestnumber: 'GuestNumber',
+    tablenumber: 'Table Number',
+    studentpicture: 'StudentPicture'
+  };
+  headers.forEach((header, i) => {
     let value = row.getCell(i + 1).value;
     if (value === undefined || value === null) return;
-    if (['ID', 'GuestNumber', 'GuestAttended'].includes(header)) {
+    const hn = normalizeHeaderName(header);
+    if (['id', 'guestnumber', 'guestattended', 'tablenumber'].includes(hn)) {
       const num = Number(value);
-      value = Number.isNaN(num) ? undefined : num;
+      value = Number.isNaN(num) ? value : num;
+    }
+    if (hn === 'studentattended') {
+      value = normalizeAttendedValue(value);
     }
     student[header] = value;
+    const canonical = CANONICAL[hn];
+    if (canonical && student[canonical] === undefined) {
+      student[canonical] = value;
+    }
   });
   return student;
 }
@@ -85,10 +131,11 @@ function parseStudentRow(row) {
 async function getAllStudents() {
   const wb = await loadWorkbook();
   const ws = wb.getWorksheet(SHEET_NAME);
+  const headers = getHeadersFromWorksheet(ws);
   const students = [];
   ws.eachRow((row, rowNumber) => {
     if (rowNumber === 1) return; // skip header
-    const student = parseStudentRow(row);
+    const student = parseStudentRow(row, headers);
     if (student.ID !== undefined) students.push(student);
   });
   return students;
@@ -100,11 +147,43 @@ async function getStudentById(id) {
 }
 
 async function updateStudentField(id, field, value) {
-  const column = HEADERS.indexOf(field) + 1;
+  const wb = await loadWorkbook();
+  const ws = wb.getWorksheet(SHEET_NAME);
+  const headers = getHeadersFromWorksheet(ws);
+  const FIELD_ALIASES = {
+    GuestAttended: ['Guest Attended', 'Guest_Attended'],
+    StudentAttended: ['Student Attended', 'Student_Attended'],
+    GuestNumber: ['Guest Number', 'Guest_Number'],
+    'Table Number': ['Table Number ', 'TableNumber'],
+    StudentPicture: ['Student Picture', 'Student_Picture', 'Picture']
+  };
+
+  const want = String(field);
+  const wantNorm = normalizeHeaderName(want);
+
+  const findColumn = () => {
+    // 1) Exact match
+    let idx = headers.indexOf(want);
+    if (idx !== -1) return idx + 1;
+    // 2) Trimmed match
+    idx = headers.findIndex((h) => h.trim() === want.trim());
+    if (idx !== -1) return idx + 1;
+    // 3) Normalized (ignore spaces/case)
+    idx = headers.findIndex((h) => normalizeHeaderName(h) === wantNorm);
+    if (idx !== -1) return idx + 1;
+    // 4) Aliases
+    const aliases = FIELD_ALIASES[want] || [];
+    for (const a of aliases) {
+      const an = normalizeHeaderName(a);
+      idx = headers.findIndex((h) => normalizeHeaderName(h) === an);
+      if (idx !== -1) return idx + 1;
+    }
+    return 0;
+  };
+
+  let column = findColumn();
   if (column === 0) throw new Error(`Unknown field ${field}`);
   writeQueue = writeQueue.then(async () => {
-    const wb = await loadWorkbook();
-    const ws = wb.getWorksheet(SHEET_NAME);
     let targetRow;
     ws.eachRow((row, rowNumber) => {
       if (rowNumber === 1) return;
