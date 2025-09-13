@@ -43,6 +43,7 @@ export default function GownManagement() {
   }
 
   const handleSelect = value => {
+    setMessage(null)
     setSelectedId(value)
     if (value) loadStudent(value)
     else setStudent(null)

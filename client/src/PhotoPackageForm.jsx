@@ -95,13 +95,14 @@ export default function PhotoPackageForm() {
   }
 
   const handleSelect = value => {
+    setMessage(null)
     setSelectedId(value)
     if (value) loadStudent(value)
     else setStudent(null)
     setOpen(false)
   }
 
-  const selectedPackage = PACKAGES.find(p => p.name === pkg)
+  const selectedPackage = PACKAGES.find(p => p.name === pkg) || PACKAGES[0]
   const price = pkgType === 'Digital' ? selectedPackage.digital : selectedPackage.prints
 
   const updateFields = updates => {

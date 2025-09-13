@@ -204,6 +204,7 @@ export default function AttendanceForm() {
   }
 
   const handleSelectItem = id => {
+    setMessage(null)
     setSelectedId(id)
     loadStudent(id)
   }
