@@ -10,15 +10,25 @@ export default function TableAssignments() {
   useEffect(() => {
     let mounted = true
     setLoading(true)
-    api
-      .getAllStudents()
-      .then((data) => {
-        if (mounted) setStudents(data || [])
-      })
-      .catch((e) => setError(e?.message || 'Failed to load'))
-      .finally(() => setLoading(false))
+    const fetchData = () => {
+      api
+        .getAllStudents()
+        .then((data) => {
+          if (mounted) setStudents(data || [])
+        })
+        .catch((e) => setError(e?.message || 'Failed to load'))
+        .finally(() => setLoading(false))
+    }
+
+    fetchData()
+
+    // Subscribe to server-sent events for immediate updates
+    const source = new EventSource('/events')
+    source.onmessage = () => fetchData()
+
     return () => {
       mounted = false
+      source.close()
     }
   }, [api])
 
@@ -66,7 +76,7 @@ export default function TableAssignments() {
     return entries.map(([table, people]) => ({ table, people }))
   }, [students])
 
-  if (loading) return <div>Loading…</div>
+  if (loading) return <div>Loading...</div>
   if (error) return <div style={{ color: 'red' }}>{error}</div>
 
   return (
@@ -81,7 +91,7 @@ export default function TableAssignments() {
       >
         {tables.map((t) => (
           <div key={t.table} style={{ border: '1px solid #ddd', borderRadius: 8, padding: 12 }}>
-            <h3 style={{ marginTop: 0, marginBottom: 8 }}>Table {t.table}</h3>
+            <h3 style={{ marginTop: 0, marginBottom: 8 }}>{t.table}</h3>
             <ul style={{ paddingLeft: 18, margin: 0 }}>
               {t.people.map((name, idx) => (
                 <li key={idx}>{name}</li>
@@ -93,3 +103,4 @@ export default function TableAssignments() {
     </div>
   )
 }
+
