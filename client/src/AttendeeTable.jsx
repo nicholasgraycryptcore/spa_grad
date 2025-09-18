@@ -102,6 +102,7 @@ export default function AttendeeTable() {
           return {
             id: s.ID,
             name: fullName || 'N/A',
+            email: s.Email || 'N/A',
             gown: s.GownStatus || 'Not Collected',
             photo: photoMeta ? '' : 'No Photo',
             photoMeta: photoMeta && dimensions
@@ -127,13 +128,15 @@ export default function AttendeeTable() {
         headStyles: { fillColor: [41, 128, 185] },
         columnStyles: {
           id: { cellWidth: 60 },
-          name: { cellWidth: 200 },
-          gown: { cellWidth: 140 },
-          photo: { cellWidth: 180, halign: 'center' }
+          name: { cellWidth: 180 },
+          email: { cellWidth: 200 },
+          gown: { cellWidth: 120 },
+          photo: { cellWidth: 140, halign: 'center' }
         },
         columns: [
           { header: 'ID', dataKey: 'id' },
           { header: 'Name', dataKey: 'name' },
+          { header: 'Email', dataKey: 'email' },
           { header: 'Gown Status', dataKey: 'gown' },
           { header: 'Photo', dataKey: 'photo' }
         ],
